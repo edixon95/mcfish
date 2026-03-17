@@ -1,0 +1,11 @@
+name: minecraftFish
+version: '1.0-SNAPSHOT'
+main: fishgame.minecraftFish.MinecraftFish
+api-version: '1.21'
+
+commands:
+  fishgame:
+    description: Control the fishing game
+    usage: /fishgame <start|stop>
+  fishinv:
+    description: Open your fish inventory
