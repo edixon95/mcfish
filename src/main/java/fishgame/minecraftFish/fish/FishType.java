@@ -11,13 +11,15 @@ public class FishType {
     private final Material material;
     private final int rarityWeight;
     private final int baseGoldValue; // new field
+    private final int fishPower;
 
-    public FishType(String name, Material material, int rarityWeight, int baseGoldValue) {
+    public FishType(String name, Material material, int rarityWeight, int baseGoldValue, int fishPower) {
         this.name = name;
         this.material = material;
         this.rarityWeight = rarityWeight;
 //        this.customModelData = customModelData;
         this.baseGoldValue = baseGoldValue;
+        this.fishPower = fishPower;
     }
 
     public String getName() {
@@ -31,6 +33,8 @@ public class FishType {
     public int getRarityWeight() {
         return rarityWeight;
     }
+
+    public int getFishPower() { return fishPower;}
 
     public ItemStack getItem() {
         ItemStack item = new ItemStack(material);

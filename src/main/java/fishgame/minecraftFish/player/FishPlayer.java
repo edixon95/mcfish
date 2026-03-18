@@ -10,6 +10,7 @@ public class FishPlayer {
     private int gold;
     private int premium;
     private int catchInt;
+    private int fishPower;
 
     public FishPlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -18,6 +19,7 @@ public class FishPlayer {
         this.gold = 0;
         this.premium = 0;
         this.catchInt = 70;
+        this.fishPower = 0;
     }
 
     public UUID getUuid() {
@@ -32,12 +34,20 @@ public class FishPlayer {
         return fishCaught;
     }
 
+    public int getFishPower() {
+        return fishPower;
+    }
+
     public int getGold() {
         return gold;
     }
 
     public int getPremium() {
         return premium;
+    }
+
+    public void setFishPower(int power) {
+        this.fishPower = power;
     }
 
     public void setFishCaught(int fishCaught) {

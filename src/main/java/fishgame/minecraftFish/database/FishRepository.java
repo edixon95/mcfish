@@ -36,8 +36,9 @@ public class FishRepository {
 
             int weight = rs.getInt("weight");
             int value = rs.getInt("base_gold_value");
+            int fishPower = rs.getInt("fish_power");
 
-            fishList.add(new FishType(name, material, weight, value));
+            fishList.add(new FishType(name, material, weight, value, fishPower));
         }
 
         return fishList;

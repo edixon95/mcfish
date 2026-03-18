@@ -22,8 +22,16 @@ public class FishManager {
     }
 
     public FishType rollFish(FishPlayer player) {
-        int index = random.nextInt(fishPool.size());
-        return fishPool.get(index);
+        List<FishType> eligibleFish = fishPool.stream()
+                .filter(fish -> fish.getFishPower() <= player.getFishPower())
+                .toList();
+
+        if (eligibleFish.isEmpty()) {
+            return null; // or fallback logic
+        }
+
+        int index = random.nextInt(eligibleFish.size());
+        return eligibleFish.get(index);
     }
 
     public void reloadFish() {
@@ -40,9 +48,9 @@ public class FishManager {
             fishPool.addAll(fishRepository.getAllFish());
 
             if (fishPool.isEmpty()) {
-                fishPool.add(new FishType("Common Fish", Material.COD, 1, 5));
-                fishPool.add(new FishType("Rare Fish", Material.SALMON, 2, 20));
-                fishPool.add(new FishType("Golden Fish", Material.TROPICAL_FISH, 3, 100));
+                fishPool.add(new FishType("Common Fish", Material.COD, 1, 5, 1));
+                fishPool.add(new FishType("Rare Fish", Material.SALMON, 2, 20, 1));
+                fishPool.add(new FishType("Golden Fish", Material.TROPICAL_FISH, 3, 100, 2));
             }
 
         } catch (SQLException e) {
