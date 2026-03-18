@@ -1,6 +1,7 @@
 package fishgame.minecraftFish.game;
 
 import fishgame.minecraftFish.database.PlayerRepository;
+import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
 import fishgame.minecraftFish.util.InventorySerializer;
 import org.bukkit.Bukkit;
@@ -27,6 +28,11 @@ public class PlayerManager {
         this.plugin = plugin;
     }
 
+    public FishPlayer handleGetPlayer(UUID uuid) {
+        return onlinePlayers.get(uuid);
+    }
+
+    // Player connections
     public void loadPlayerOnJoin (PlayerJoinEvent event) {
         loadPlayerFromDatabaseAndApplyInventory(event.getPlayer());
     }
@@ -44,6 +50,9 @@ public class PlayerManager {
                 // Apply inventory
                 String inventoryJSON = result.getString("inventory");
                 applyInventoryFromJSON(inventoryJSON, player);
+
+                fp.setGold(result.getInt("currency1"));
+                fp.setPremium(result.getInt("currency2"));
             } else {
                 playerRepository.createPlayer(uuid, name);
             }
@@ -83,13 +92,35 @@ public class PlayerManager {
 
             String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
 
-            try {
-                playerRepository.savePlayerToDatabase(fp, inventoryJSON);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    playerRepository.savePlayerToDatabase(fp, inventoryJSON);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
 
             removePlayer(uuid);
+        }
+    }
+
+    public void autoSaveAllPlayers() {
+        for (Map.Entry<UUID, FishPlayer> entry : onlinePlayers.entrySet()) {
+            UUID uuid = entry.getKey();
+            FishPlayer fp = entry.getValue();
+
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) continue;
+
+            String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
+
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    playerRepository.savePlayerToDatabase(fp, inventoryJSON);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 

@@ -15,7 +15,7 @@ public class PlayerRepository {
 
     public void createPlayer(UUID uuid, String name) throws SQLException {
         PreparedStatement stmt = database.getConnection().prepareStatement(
-                "INSERT INTO players (uuid, name, fish_caught) VALUES (?, ?, 0)"
+                "INSERT INTO players (uuid, name, fish_caught, currency1, currency2) VALUES (?, ?, 0, 0, 0)"
         );
 
         stmt.setString(1, uuid.toString());
@@ -33,12 +33,14 @@ public class PlayerRepository {
 
     public void savePlayerToDatabase(FishPlayer player, String inventoryJSON) throws SQLException {
         PreparedStatement stmt = database.getConnection().prepareStatement(
-                "UPDATE players SET fish_caught = ?, inventory = ? WHERE uuid = ?"
+                "UPDATE players SET fish_caught = ?, inventory = ?, currency1 = ?, currency2 = ? WHERE uuid = ?"
         );
 
         stmt.setInt(1, player.getFishCaught());
         stmt.setString(2, inventoryJSON);
-        stmt.setString(3, player.getUuid().toString());
+        stmt.setInt(3, player.getGold());
+        stmt.setInt(4, player.getPremium());
+        stmt.setString(5, player.getUuid().toString());
 
         stmt.executeUpdate();
         stmt.close();

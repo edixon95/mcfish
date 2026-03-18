@@ -2,6 +2,7 @@ package fishgame.minecraftFish.game;
 
 import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.fish.FishType;
+import fishgame.minecraftFish.player.FishPlayer;
 import org.bukkit.Material;
 
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ public class FishManager {
         loadFishFromDatabase();
     }
 
-    public FishType rollFish() {
+    public FishType rollFish(FishPlayer player) {
         int index = random.nextInt(fishPool.size());
         return fishPool.get(index);
     }

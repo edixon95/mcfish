@@ -2,6 +2,7 @@ package fishgame.minecraftFish;
 
 import fishgame.minecraftFish.database.Database;
 import fishgame.minecraftFish.game.GameManager;
+import fishgame.minecraftFish.game.ListenerManager;
 import fishgame.minecraftFish.player.FishPlayer;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,6 +21,7 @@ public final class MinecraftFish extends JavaPlugin implements Listener {
 
     private Database database;
     private GameManager gameManager;
+    private ListenerManager listenerManager;
 
     @Override
     public void onEnable() {
@@ -34,12 +36,22 @@ public final class MinecraftFish extends JavaPlugin implements Listener {
 
         // Initialize game manager with database reference
         gameManager = new GameManager(this, database);
+        listenerManager = new ListenerManager(this, gameManager);
+
+        listenerManager.registerListeners();
 
         // Register events
         getServer().getPluginManager().registerEvents(this, this);
 
         // Register command executor
         this.getCommand("fishgame").setExecutor(new fishgame.minecraftFish.commands.FishGameCommand(gameManager));
+
+        Bukkit.getScheduler().runTaskTimer(
+                this,
+                () -> gameManager.getPlayerManager().autoSaveAllPlayers(),
+                20L * 30,
+                20L * 60
+        );
 
         getLogger().info("MinecraftFish plugin started");
     }
@@ -73,4 +85,5 @@ public final class MinecraftFish extends JavaPlugin implements Listener {
     public GameManager getGameManager() {
         return gameManager;
     }
+    public ListenerManager getListenerManager() { return listenerManager;}
 }
