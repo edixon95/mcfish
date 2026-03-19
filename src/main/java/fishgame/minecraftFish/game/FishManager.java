@@ -6,9 +6,7 @@ import fishgame.minecraftFish.player.FishPlayer;
 import org.bukkit.Material;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class FishManager {
 
@@ -27,11 +25,36 @@ public class FishManager {
                 .toList();
 
         if (eligibleFish.isEmpty()) {
-            return null; // or fallback logic
+            return null;
         }
 
-        int index = random.nextInt(eligibleFish.size());
-        return eligibleFish.get(index);
+        double rarityModifier = player.getRarityModifier();
+
+        double totalWeight = 0;
+        Map<FishType, Double> weights = new HashMap<>();
+
+        for (FishType fish : eligibleFish) {
+            int w = fish.getRarityWeight();
+
+
+            double baseChance = 1.0 - (w / 1000.0);
+
+            double adjusted = Math.pow(baseChance, 1.0 / (1.0 + rarityModifier));
+
+            weights.put(fish, adjusted);
+            totalWeight += adjusted;
+        }
+
+        double roll = random.nextDouble() * totalWeight;
+
+        for (Map.Entry<FishType, Double> entry : weights.entrySet()) {
+            roll -= entry.getValue();
+            if (roll <= 0) {
+                return entry.getKey();
+            }
+        }
+
+        return eligibleFish.getFirst();
     }
 
     public void reloadFish() {

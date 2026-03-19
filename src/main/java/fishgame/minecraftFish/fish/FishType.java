@@ -10,7 +10,7 @@ public class FishType {
     private final String name;
     private final Material material;
     private final int rarityWeight;
-    private final int baseGoldValue; // new field
+    private final int baseGoldValue;
     private final int fishPower;
 
     public FishType(String name, Material material, int rarityWeight, int baseGoldValue, int fishPower) {

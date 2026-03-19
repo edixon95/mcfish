@@ -73,6 +73,21 @@ public class FishGameCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("player")) {
+
+            String name = args[1];
+            double rarityModifier;
+            try {
+                rarityModifier = Double.parseDouble(args[2]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("Power must be a number.");
+                return true;
+            }
+            gameManager.getPlayerManager().handleFishPower(name, rarityModifier);
+
+            return true;
+        }
+
         sender.sendMessage(Component.text("Unknown command. Use start or stop."));
         return true;
     }

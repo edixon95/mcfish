@@ -26,13 +26,12 @@ public class FishingListener implements Listener {
         Player player = event.getPlayer();
         FishPlayer fp = gameManager.getPlayerManager().handleGetPlayer(player.getUniqueId());
 
-        // Dynamic set on cast
+        // todo: Dynamic set on cast
         fp.setFishPower(1);
 
         if (event.getState() == PlayerFishEvent.State.BITE) {
             event.setCancelled(true);
 
-            // Roll a fish
             FishType caught = gameManager.getFishManager().rollFish(fp);
             fp.addGold(caught.getBaseGoldValue());
             fp.addFishCaught(1);

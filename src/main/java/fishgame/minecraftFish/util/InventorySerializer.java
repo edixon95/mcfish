@@ -36,7 +36,7 @@ public class InventorySerializer {
 
         for (ItemStack item : contents) {
             if (item != null) {
-                Map<String, Object> itemMap = item.serialize(); // Bukkit's ConfigurationSerializable
+                Map<String, Object> itemMap = item.serialize();
                 serialized.add(itemMap);
             } else {
                 serialized.add(null);
@@ -46,9 +46,6 @@ public class InventorySerializer {
         return gson.toJson(serialized);
     }
 
-    /**
-     * Convert JSON string back to ItemStack[]
-     */
     public static ItemStack[] inventoryFromJSON(String json) {
         if (json == null || json.isEmpty()) return new ItemStack[0];
 

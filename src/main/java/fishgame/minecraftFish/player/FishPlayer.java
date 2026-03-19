@@ -9,7 +9,7 @@ public class FishPlayer {
     private int fishCaught;
     private int gold;
     private int premium;
-    private int catchInt;
+    private double rarityModifier;
     private int fishPower;
 
     public FishPlayer(UUID uuid, String name) {
@@ -18,7 +18,7 @@ public class FishPlayer {
         this.fishCaught = 0;
         this.gold = 0;
         this.premium = 0;
-        this.catchInt = 70;
+        this.rarityModifier = 1;
         this.fishPower = 0;
     }
 
@@ -37,6 +37,8 @@ public class FishPlayer {
     public int getFishPower() {
         return fishPower;
     }
+
+    public double getRarityModifier() { return rarityModifier;}
 
     public int getGold() {
         return gold;
@@ -57,6 +59,8 @@ public class FishPlayer {
     public void addFishCaught(int amount) {
         this.fishCaught += amount;
     }
+
+    public void setRarityModifier(double amount) {this.rarityModifier = amount;}
 
     public void setGold(int amount) {
         this.gold = amount;

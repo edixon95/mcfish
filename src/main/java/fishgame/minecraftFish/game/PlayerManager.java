@@ -32,6 +32,17 @@ public class PlayerManager {
         return onlinePlayers.get(uuid);
     }
 
+    public boolean handleFishPower(String name, double rarityModifier) {
+        Player player = Bukkit.getPlayer(name);
+        if (player == null) {return false;}
+        UUID uuid = player.getUniqueId();
+
+        FishPlayer fp = handleGetPlayer(uuid);
+        fp.setRarityModifier(rarityModifier);
+
+        return true;
+    }
+
     // Player connections
     public void loadPlayerOnJoin (PlayerJoinEvent event) {
         loadPlayerFromDatabaseAndApplyInventory(event.getPlayer());
@@ -45,8 +56,8 @@ public class PlayerManager {
         try {
             ResultSet result = playerRepository.getPlayerFromDatabase(uuid);
             if (result.next()) {
-                // Set stats here that get copied over
                 fp.setFishCaught(result.getInt("fish_caught"));
+
                 // Apply inventory
                 String inventoryJSON = result.getString("inventory");
                 applyInventoryFromJSON(inventoryJSON, player);
@@ -73,7 +84,6 @@ public class PlayerManager {
         try {
             ItemStack[] items = InventorySerializer.inventoryFromJSON(inventoryJSON);
 
-            // Schedule on main thread since Bukkit API is not thread-safe
             Bukkit.getScheduler().runTask(plugin, () -> {
                 player.getInventory().setContents(items);
             });
