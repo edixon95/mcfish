@@ -40,6 +40,9 @@ public final class MinecraftFish extends JavaPlugin implements Listener {
 
         listenerManager.registerListeners();
 
+        // Register events -- DONT REMOVE THIS
+        getServer().getPluginManager().registerEvents(this, this);
+
         // Register command executor
         this.getCommand("fishgame").setExecutor(new fishgame.minecraftFish.commands.FishGameCommand(gameManager));
 

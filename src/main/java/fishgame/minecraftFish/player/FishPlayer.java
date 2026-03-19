@@ -11,6 +11,7 @@ public class FishPlayer {
     private int premium;
     private double rarityModifier;
     private int fishPower;
+    private double gradeModifier;
 
     public FishPlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -20,6 +21,7 @@ public class FishPlayer {
         this.premium = 0;
         this.rarityModifier = 1;
         this.fishPower = 0;
+        this.gradeModifier = 0;
     }
 
     public UUID getUuid() {
@@ -39,6 +41,8 @@ public class FishPlayer {
     }
 
     public double getRarityModifier() { return rarityModifier;}
+
+    public double getGradeModifier() {return gradeModifier;}
 
     public int getGold() {
         return gold;
@@ -61,6 +65,8 @@ public class FishPlayer {
     }
 
     public void setRarityModifier(double amount) {this.rarityModifier = amount;}
+
+    public void setGradeModifier(double amount) {this.gradeModifier = amount;}
 
     public void setGold(int amount) {
         this.gold = amount;

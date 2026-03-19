@@ -32,13 +32,24 @@ public class PlayerManager {
         return onlinePlayers.get(uuid);
     }
 
-    public boolean handleFishPower(String name, double rarityModifier) {
+    public boolean handleRarityModifier(String name, double rarityModifier) {
         Player player = Bukkit.getPlayer(name);
         if (player == null) {return false;}
         UUID uuid = player.getUniqueId();
 
         FishPlayer fp = handleGetPlayer(uuid);
         fp.setRarityModifier(rarityModifier);
+
+        return true;
+    }
+
+    public boolean handleGradeModifier(String name, double gradeModifier) {
+        Player player = Bukkit.getPlayer(name);
+        if (player == null) {return false;}
+        UUID uuid = player.getUniqueId();
+
+        FishPlayer fp = handleGetPlayer(uuid);
+        fp.setGradeModifier(gradeModifier);
 
         return true;
     }

@@ -3,6 +3,7 @@ package fishgame.minecraftFish.game;
 import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
+import fishgame.minecraftFish.util.GameUtil;
 import org.bukkit.Material;
 
 import java.sql.SQLException;
@@ -30,31 +31,15 @@ public class FishManager {
 
         double rarityModifier = player.getRarityModifier();
 
-        double totalWeight = 0;
-        Map<FishType, Double> weights = new HashMap<>();
-
-        for (FishType fish : eligibleFish) {
-            int w = fish.getRarityWeight();
-
-
-            double baseChance = 1.0 - (w / 1000.0);
-
-            double adjusted = Math.pow(baseChance, 1.0 / (1.0 + rarityModifier));
-
-            weights.put(fish, adjusted);
-            totalWeight += adjusted;
-        }
-
-        double roll = random.nextDouble() * totalWeight;
-
-        for (Map.Entry<FishType, Double> entry : weights.entrySet()) {
-            roll -= entry.getValue();
-            if (roll <= 0) {
-                return entry.getKey();
-            }
-        }
-
-        return eligibleFish.getFirst();
+        return GameUtil.weightedPick(
+                eligibleFish,
+                fish -> {
+                    int w = fish.getRarityWeight();
+                    double baseChance = 1.0 / (1.0 + w);
+                    return Math.pow(baseChance, 1.0 / (1.0 + rarityModifier));
+                },
+                random
+        );
     }
 
     public void reloadFish() {

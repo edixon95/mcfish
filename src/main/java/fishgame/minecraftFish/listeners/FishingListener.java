@@ -1,5 +1,6 @@
 package fishgame.minecraftFish.listeners;
 
+import fishgame.minecraftFish.Misc.Rarity;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.game.GameManager;
 import fishgame.minecraftFish.player.FishPlayer;
@@ -8,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
-
-import java.util.Random;
 
 public class FishingListener implements Listener {
 
@@ -26,17 +25,19 @@ public class FishingListener implements Listener {
         Player player = event.getPlayer();
         FishPlayer fp = gameManager.getPlayerManager().handleGetPlayer(player.getUniqueId());
 
-        // todo: Dynamic set on cast
         fp.setFishPower(1);
 
         if (event.getState() == PlayerFishEvent.State.BITE) {
             event.setCancelled(true);
 
             FishType caught = gameManager.getFishManager().rollFish(fp);
-            fp.addGold(caught.getBaseGoldValue());
+            Rarity grade = gameManager.getMiscManager().rollRarity(fp);
+
+            int goldWithMultiplier = (int) Math.floor(caught.getBaseGoldValue() * grade.getMultiplier());
+            fp.addGold(goldWithMultiplier);
             fp.addFishCaught(1);
 
-            player.sendMessage(Component.text("You caught a " + caught.getName() + "!"));
+            player.sendMessage(Component.text("You caught a " + grade.getName() + " " + caught.getName() + " fish! Value: G" + goldWithMultiplier));
         }
     }
 }

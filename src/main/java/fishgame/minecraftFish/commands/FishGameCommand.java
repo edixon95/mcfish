@@ -74,18 +74,38 @@ public class FishGameCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("player")) {
+            String name = args[2];
+            switch(args[1].toLowerCase()) {
+                case "raritymod":
+                    double rarityModifier;
+                    try {
+                        rarityModifier = Double.parseDouble(args[3]);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage("Power must be a number.");
+                        return true;
+                    }
+                    gameManager.getPlayerManager().handleRarityModifier(name, rarityModifier);
 
-            String name = args[1];
-            double rarityModifier;
-            try {
-                rarityModifier = Double.parseDouble(args[2]);
-            } catch (NumberFormatException e) {
-                sender.sendMessage("Power must be a number.");
-                return true;
+                    return true;
+
+                case "grademod":
+                    double gradeModifier;
+                    try {
+                        gradeModifier = Double.parseDouble(args[3]);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage("Power must be a number.");
+                        return true;
+                    }
+                    gameManager.getPlayerManager().handleGradeModifier(name, gradeModifier);
+
+                    return true;
+
+                default:
+                    sender.sendMessage("Unknown player command.");
+                    break;
             }
-            gameManager.getPlayerManager().handleFishPower(name, rarityModifier);
 
-            return true;
+
         }
 
         sender.sendMessage(Component.text("Unknown command. Use start or stop."));
