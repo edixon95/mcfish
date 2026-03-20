@@ -25,16 +25,10 @@ public class MiscManager {
     }
 
     public Rarity rollRarity(FishPlayer player) {
-
-        double gradeModifier = player.getGradeModifier();
-
-        return GameUtil.weightedPick(
+        return GameUtil.rollScaled(
                 rarityPool,
-                rarity -> {
-                    int w = rarity.getWeight();
-                    double baseChance = 1.0 / (1.0 + w);
-                    return Math.pow(baseChance, 1.0 / (1.0 + gradeModifier));
-                },
+                Rarity::getWeight,
+                player.getGradeModifier(), // same idea
                 random
         );
     }

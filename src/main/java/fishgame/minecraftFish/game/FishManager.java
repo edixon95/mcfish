@@ -29,15 +29,10 @@ public class FishManager {
             return null;
         }
 
-        double rarityModifier = player.getRarityModifier();
-
-        return GameUtil.weightedPick(
+        return GameUtil.rollScaled(
                 eligibleFish,
-                fish -> {
-                    int w = fish.getRarityWeight();
-                    double baseChance = 1.0 / (1.0 + w);
-                    return Math.pow(baseChance, 1.0 / (1.0 + rarityModifier));
-                },
+                FishType::getRarityWeight,
+                player.getRarityModifier(), // now acts as "power"
                 random
         );
     }
