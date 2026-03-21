@@ -1,6 +1,7 @@
 package fishgame.minecraftFish.game;
 
 import fishgame.minecraftFish.listeners.FishingListener;
+import fishgame.minecraftFish.listeners.PlayerInventoryListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,5 +16,6 @@ public class ListenerManager {
 
     public void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new FishingListener(gameManager), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerInventoryListener(), plugin);
     }
 }
