@@ -1,22 +1,8 @@
 package fishgame.minecraftFish.util;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.configuration.serialization.DelegateDeserialization;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.inventory.*;
 
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -30,7 +16,7 @@ public class InventorySerializer {
     /**
      * Convert PlayerInventory to JSON string
      */
-    public static String inventoryToJSON(PlayerInventory inventory) {
+    public static String inventoryToJSON(Inventory inventory) {
         ItemStack[] contents = inventory.getContents();
         List<Map<String, Object>> serialized = new ArrayList<>();
 

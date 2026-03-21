@@ -1,6 +1,7 @@
 package fishgame.minecraftFish.game;
 
 import fishgame.minecraftFish.Misc.Rarity;
+import fishgame.minecraftFish.Misc.ServerConfig;
 import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.database.MiscRepository;
 import fishgame.minecraftFish.fish.FishType;
@@ -19,11 +20,14 @@ public class MiscManager {
     private final List<Upgrade> upgradePool = new ArrayList<>();
     private final Random random = new Random();
     private final Map<Integer, Upgrade> upgradeIndex = new HashMap<>();
+    private final ServerConfig serverConfig;
 
     public MiscManager(MiscRepository miscRepository) {
         this.miscRepository = miscRepository;
+
         loadRarityFromDatabase();
         loadUpgradesFromDatabase();
+        this.serverConfig = loadServerConfig();
     }
 
     public Rarity rollRarity(FishPlayer player) {
@@ -84,6 +88,25 @@ public class MiscManager {
         }
 
         return defaults;
+    }
+
+    public String getDefaultPlayerInventory() {
+        return serverConfig.getPlayerInventory();
+    }
+
+    private ServerConfig loadServerConfig() {
+        try {
+            ServerConfig cfg = miscRepository.getServerConfig();
+
+            if (cfg == null) {
+                throw new RuntimeException("No server config found in database");
+            }
+
+            return cfg;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to load server config", e);
+        }
     }
 
 }

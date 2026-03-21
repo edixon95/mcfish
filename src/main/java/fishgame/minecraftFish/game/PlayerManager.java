@@ -18,6 +18,7 @@ import java.util.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,40 +66,75 @@ public class PlayerManager {
     }
 
     private void loadPlayerFromDatabaseAndApplyInventory(Player player) {
+
         UUID uuid = player.getUniqueId();
         String name = player.getName();
         FishPlayer fp = new FishPlayer(uuid, name);
 
+        String defaultInventoryJSON = miscManager.getDefaultPlayerInventory();
+
         try {
             ResultSet result = playerRepository.getPlayerFromDatabase(uuid);
+
             if (result.next()) {
+
                 fp.setFishCaught(result.getInt("fish_caught"));
 
-                // Apply inventory
-                String inventoryJSON = result.getString("inventory");
-                applyInventoryFromJSON(inventoryJSON, player);
+                String playerInventoryJSON = result.getString("inventory");
 
-                // Apply upgrades
+                applyCombinedInventory(
+                        defaultInventoryJSON,
+                        playerInventoryJSON,
+                        player
+                );
+
                 String upgradesJSON = result.getString("upgrades");
                 applyUpgradesFromJSON(upgradesJSON, fp);
 
                 fp.setGold(result.getInt("currency1"));
                 fp.setPremium(result.getInt("currency2"));
+
             } else {
 
                 playerRepository.createPlayer(uuid, name);
 
-                // give default upgrades (level 1)
-                List<Upgrade> defaultUpgrades = miscManager.getDefaultUpgrades();
+                // default inventory only
+                applyInventoryFromJSON(defaultInventoryJSON, player);
 
-                fp.setAllUpgrade(defaultUpgrades);
-
+                // default upgrades
+                fp.setAllUpgrade(miscManager.getDefaultUpgrades());
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         handlePlayerJoin(fp);
+    }
+
+    private void applyCombinedInventory(
+            String defaultJSON,
+            String playerJSON,
+            Player player
+    ) {
+
+        ItemStack[] defaultItems =
+                InventorySerializer.inventoryFromJSON(defaultJSON);
+
+        ItemStack[] playerHotbar =
+                InventorySerializer.inventoryFromJSON(playerJSON);
+
+        Bukkit.getScheduler().runTask(plugin, () -> {
+
+            // apply full default layout first
+            player.getInventory().setContents(defaultItems);
+
+            // override hotbar slots 0–8 with saved items
+            for (int i = 0; i < playerHotbar.length && i < 9; i++) {
+                player.getInventory().setItem(i, playerHotbar[i]);
+            }
+
+        });
     }
 
     private void handlePlayerJoin(FishPlayer player) {
@@ -156,7 +192,7 @@ public class PlayerManager {
         FishPlayer fp = onlinePlayers.get(uuid);
         if (fp != null) {
 
-            String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
+            String inventoryJSON = InventorySerializer.inventoryToJSON(createTempInv(player));
             String upgradesJSON = upgradesToJSON(fp);
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -179,7 +215,7 @@ public class PlayerManager {
             Player player = Bukkit.getPlayer(uuid);
             if (player == null) continue;
 
-            String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
+            String inventoryJSON = InventorySerializer.inventoryToJSON(createTempInv(player));
             String upgradesJSON = upgradesToJSON(fp);
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -190,6 +226,16 @@ public class PlayerManager {
                 }
             });
         }
+    }
+
+    private Inventory createTempInv(Player player) {
+        Inventory tempInv = Bukkit.createInventory(null, 9);
+
+        for (int i = 0; i < 9; i++) {
+            tempInv.setItem(i, player.getInventory().getItem(i));
+        }
+
+        return tempInv;
     }
 
     private String upgradesToJSON(FishPlayer player) {

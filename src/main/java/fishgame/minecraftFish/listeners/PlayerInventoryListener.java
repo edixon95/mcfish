@@ -27,7 +27,7 @@ public class PlayerInventoryListener implements Listener {
         int slot = event.getSlot(); // 0–8 = hotbar, 9+ = main inventory
 
         // Only track slots beyond hotbar - TBD
-        // if (slot <= 8) return;
+        if (slot <= 8) return;
 
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;

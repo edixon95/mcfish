@@ -1,6 +1,7 @@
 package fishgame.minecraftFish.database;
 
 import fishgame.minecraftFish.Misc.Rarity;
+import fishgame.minecraftFish.Misc.ServerConfig;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.Upgrade;
 import org.bukkit.Material;
@@ -51,5 +52,22 @@ public class MiscRepository {
         }
 
         return upgradeList;
+    }
+
+    public ServerConfig getServerConfig() throws SQLException {
+
+        ResultSet rs = database.getConnection()
+                .createStatement()
+                .executeQuery("SELECT * FROM config");
+
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            String playerInventory = rs.getString("player_inventory");
+            double version = rs.getDouble("version");
+
+            return new ServerConfig(id, version, playerInventory);
+        }
+
+        return null;
     }
 }
