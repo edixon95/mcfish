@@ -28,8 +28,9 @@ public class GameManager {
         MiscRepository miscRepo = new MiscRepository(database);
 
         this.fishManager = new FishManager(fishRepo);
-        this.playerManager = new PlayerManager(playerRepo, plugin);
         this.miscManager = new MiscManager(miscRepo);
+        this.playerManager = new PlayerManager(playerRepo, plugin, miscManager);
+
     }
 
     public FishManager getFishManager() {

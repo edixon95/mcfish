@@ -5,23 +5,25 @@ import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.database.MiscRepository;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
+import fishgame.minecraftFish.player.Upgrade;
 import fishgame.minecraftFish.util.GameUtil;
 import org.bukkit.Material;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MiscManager {
 
     private final MiscRepository miscRepository;
     private final List<Rarity> rarityPool = new ArrayList<>();
+    private final List<Upgrade> upgradePool = new ArrayList<>();
     private final Random random = new Random();
+    private final Map<Integer, Upgrade> upgradeIndex = new HashMap<>();
 
     public MiscManager(MiscRepository miscRepository) {
         this.miscRepository = miscRepository;
         loadRarityFromDatabase();
+        loadUpgradesFromDatabase();
     }
 
     public Rarity rollRarity(FishPlayer player) {
@@ -46,4 +48,42 @@ public class MiscManager {
             e.printStackTrace();
         }
     }
+
+    private void loadUpgradesFromDatabase() {
+        try {
+            upgradePool.addAll(miscRepository.getAllUpgrades());
+
+            if (upgradePool.isEmpty()) {
+                upgradePool.add(new Upgrade(1, "More Fish", 10, 1, 1));
+                upgradePool.add(new Upgrade(2, "Faster Fish", 50, 1, 1));
+            }
+
+            for (Upgrade u : upgradePool) {
+                upgradeIndex.put(u.getId(), u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Upgrade getUpgradeById(int id) {
+        return upgradeIndex.get(id);
+    }
+
+    public List<Upgrade> getDefaultUpgrades() {
+
+        List<Upgrade> defaults = new ArrayList<>();
+
+        for (Upgrade base : upgradePool) {
+
+            defaults.add(
+                    base.copyWithLevel(1)
+            );
+
+        }
+
+        return defaults;
+    }
+
 }

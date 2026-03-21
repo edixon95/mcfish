@@ -34,11 +34,10 @@ public class FishRepository {
                 System.out.println("Unknown material: " + materialString);
             }
 
-            int weight = rs.getInt("weight");
-            int value = rs.getInt("base_gold_value");
+            int roll = rs.getInt("roll");
             int fishPower = rs.getInt("fish_power");
 
-            fishList.add(new FishType(name, material, weight, value, fishPower));
+            fishList.add(new FishType(name, material, roll, fishPower));
         }
 
         return fishList;

@@ -9,16 +9,14 @@ public class FishType {
 
     private final String name;
     private final Material material;
-    private final int rarityWeight;
-    private final int baseGoldValue;
+    private final int roll;
     private final int fishPower;
 
-    public FishType(String name, Material material, int rarityWeight, int baseGoldValue, int fishPower) {
+    public FishType(String name, Material material, int roll, int fishPower) {
         this.name = name;
         this.material = material;
-        this.rarityWeight = rarityWeight;
+        this.roll = roll;
 //        this.customModelData = customModelData;
-        this.baseGoldValue = baseGoldValue;
         this.fishPower = fishPower;
     }
 
@@ -26,12 +24,8 @@ public class FishType {
         return name;
     }
 
-    public int getBaseGoldValue() {
-        return baseGoldValue;
-    }
-
-    public int getRarityWeight() {
-        return rarityWeight;
+    public int getRoll() {
+        return roll;
     }
 
     public int getFishPower() { return fishPower;}

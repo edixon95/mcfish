@@ -1,5 +1,9 @@
 package fishgame.minecraftFish.player;
 
+import fishgame.minecraftFish.fish.FishType;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class FishPlayer {
@@ -12,6 +16,7 @@ public class FishPlayer {
     private double rarityModifier;
     private int fishPower;
     private double gradeModifier;
+    private final List<Upgrade> upgrades = new ArrayList<>();
 
     public FishPlayer(UUID uuid, String name) {
         this.uuid = uuid;
@@ -43,6 +48,14 @@ public class FishPlayer {
     public double getRarityModifier() { return rarityModifier;}
 
     public double getGradeModifier() {return gradeModifier;}
+
+    public Upgrade[] getUpgrades() {
+        return upgrades.toArray(new Upgrade[0]);
+    }
+
+    public void setAllUpgrade(List<Upgrade> upgradesToSet) {
+        upgrades.addAll(upgradesToSet);
+    }
 
     public int getGold() {
         return gold;

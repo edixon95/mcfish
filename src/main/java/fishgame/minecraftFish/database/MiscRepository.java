@@ -2,6 +2,7 @@ package fishgame.minecraftFish.database;
 
 import fishgame.minecraftFish.Misc.Rarity;
 import fishgame.minecraftFish.fish.FishType;
+import fishgame.minecraftFish.player.Upgrade;
 import org.bukkit.Material;
 
 import java.sql.ResultSet;
@@ -32,5 +33,23 @@ public class MiscRepository {
         }
 
         return rarityList;
+    }
+
+    public List<Upgrade> getAllUpgrades() throws SQLException {
+        List<Upgrade> upgradeList = new ArrayList<>();
+        ResultSet rs = database.getConnection()
+                .createStatement()
+                .executeQuery("SELECT * FROM upgrades");
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            double scale = rs.getDouble("scale");
+            int baseCost = rs.getInt("base_cost");
+
+            upgradeList.add(new Upgrade(id, name, baseCost, scale, 1));
+        }
+
+        return upgradeList;
     }
 }

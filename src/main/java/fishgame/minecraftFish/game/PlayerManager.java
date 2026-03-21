@@ -1,17 +1,20 @@
 package fishgame.minecraftFish.game;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import fishgame.minecraftFish.Misc.PlayerUpgradeDTO;
 import fishgame.minecraftFish.database.PlayerRepository;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
+import fishgame.minecraftFish.player.Upgrade;
 import fishgame.minecraftFish.util.InventorySerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -22,10 +25,12 @@ public class PlayerManager {
     private final PlayerRepository playerRepository;
     private final Map<UUID, FishPlayer> onlinePlayers = new HashMap<>();
     private final JavaPlugin plugin;
+    private final MiscManager miscManager;
 
-    public PlayerManager(PlayerRepository playerRepository, JavaPlugin plugin) {
+    public PlayerManager(PlayerRepository playerRepository, JavaPlugin plugin, MiscManager miscManager) {
         this.playerRepository = playerRepository;
         this.plugin = plugin;
+        this.miscManager = miscManager;
     }
 
     public FishPlayer handleGetPlayer(UUID uuid) {
@@ -73,10 +78,21 @@ public class PlayerManager {
                 String inventoryJSON = result.getString("inventory");
                 applyInventoryFromJSON(inventoryJSON, player);
 
+                // Apply upgrades
+                String upgradesJSON = result.getString("upgrades");
+                applyUpgradesFromJSON(upgradesJSON, fp);
+
                 fp.setGold(result.getInt("currency1"));
                 fp.setPremium(result.getInt("currency2"));
             } else {
+
                 playerRepository.createPlayer(uuid, name);
+
+                // give default upgrades (level 1)
+                List<Upgrade> defaultUpgrades = miscManager.getDefaultUpgrades();
+
+                fp.setAllUpgrade(defaultUpgrades);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,6 +120,35 @@ public class PlayerManager {
         }
     }
 
+    private void applyUpgradesFromJSON(String upgradesJSON, FishPlayer player) {
+
+        if (upgradesJSON == null || upgradesJSON.isEmpty())
+            return;
+
+        Gson gson = new Gson();
+
+        Type type = new TypeToken<List<PlayerUpgradeDTO>>(){}.getType();
+        List<PlayerUpgradeDTO> storedUpgrades = gson.fromJson(upgradesJSON, type);
+
+        List<Upgrade> playerUpgrades = new ArrayList<>();
+
+        for (PlayerUpgradeDTO dto : storedUpgrades) {
+
+            Upgrade baseUpgrade = miscManager.getUpgradeById(dto.getId());
+
+            if (baseUpgrade != null) {
+
+                Upgrade playerUpgrade =
+                        baseUpgrade.copyWithLevel(dto.getLevel());
+
+                playerUpgrades.add(playerUpgrade);
+            }
+        }
+
+        player.setAllUpgrade(playerUpgrades);
+    }
+
+
     public void savePlayerAndDisconnect(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
@@ -112,10 +157,11 @@ public class PlayerManager {
         if (fp != null) {
 
             String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
+            String upgradesJSON = upgradesToJSON(fp);
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
-                    playerRepository.savePlayerToDatabase(fp, inventoryJSON);
+                    playerRepository.savePlayerToDatabase(fp, inventoryJSON, upgradesJSON);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -134,15 +180,34 @@ public class PlayerManager {
             if (player == null) continue;
 
             String inventoryJSON = InventorySerializer.inventoryToJSON(player.getInventory());
+            String upgradesJSON = upgradesToJSON(fp);
 
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
-                    playerRepository.savePlayerToDatabase(fp, inventoryJSON);
+                    playerRepository.savePlayerToDatabase(fp, inventoryJSON, upgradesJSON);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             });
         }
+    }
+
+    private String upgradesToJSON(FishPlayer player) {
+
+        List<PlayerUpgradeDTO> dtoList = new ArrayList<>();
+
+        for (Upgrade u : player.getUpgrades()) {
+
+            dtoList.add(
+                    new PlayerUpgradeDTO(
+                            u.getId(),
+                            u.getLevel()
+                    )
+            );
+
+        }
+
+        return new Gson().toJson(dtoList);
     }
 
     private void removePlayer (UUID uuid) {

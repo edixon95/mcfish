@@ -30,14 +30,14 @@ public class FishingListener implements Listener {
         if (event.getState() == PlayerFishEvent.State.BITE) {
             event.setCancelled(true);
 
-            FishType caught = gameManager.getFishManager().rollFish(fp);
-            Rarity grade = gameManager.getMiscManager().rollRarity(fp);
+//            FishType caught = gameManager.getFishManager().rollFish(fp);
+//            Rarity grade = gameManager.getMiscManager().rollRarity(fp);
 
-            int goldWithMultiplier = (int) Math.floor(caught.getBaseGoldValue() * grade.getMultiplier());
+            int goldWithMultiplier = 1;
             fp.addGold(goldWithMultiplier);
             fp.addFishCaught(1);
 
-            player.sendMessage(Component.text("You caught a " + grade.getName() + " " + caught.getName() + " fish! Value: G" + goldWithMultiplier));
+            player.sendMessage(Component.text("You caught a fish, value: " + goldWithMultiplier));
         }
     }
 }

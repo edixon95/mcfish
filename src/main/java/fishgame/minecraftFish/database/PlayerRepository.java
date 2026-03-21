@@ -31,16 +31,17 @@ public class PlayerRepository {
         return stmt.executeQuery();
     }
 
-    public void savePlayerToDatabase(FishPlayer player, String inventoryJSON) throws SQLException {
+    public void savePlayerToDatabase(FishPlayer player, String inventoryJSON, String upgradesJSON) throws SQLException {
         PreparedStatement stmt = database.getConnection().prepareStatement(
-                "UPDATE players SET fish_caught = ?, inventory = ?, currency1 = ?, currency2 = ? WHERE uuid = ?"
+                "UPDATE players SET fish_caught = ?, inventory = ?, currency1 = ?, currency2 = ?, upgrades = ? WHERE uuid = ?"
         );
 
         stmt.setInt(1, player.getFishCaught());
         stmt.setString(2, inventoryJSON);
         stmt.setInt(3, player.getGold());
         stmt.setInt(4, player.getPremium());
-        stmt.setString(5, player.getUuid().toString());
+        stmt.setString(5, upgradesJSON);
+        stmt.setString(6, player.getUuid().toString());
 
         stmt.executeUpdate();
         stmt.close();

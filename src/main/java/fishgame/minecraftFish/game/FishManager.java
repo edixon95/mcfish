@@ -3,7 +3,6 @@ package fishgame.minecraftFish.game;
 import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
-import fishgame.minecraftFish.util.GameUtil;
 import org.bukkit.Material;
 
 import java.sql.SQLException;
@@ -29,12 +28,7 @@ public class FishManager {
             return null;
         }
 
-        return GameUtil.rollScaled(
-                eligibleFish,
-                FishType::getRarityWeight,
-                player.getRarityModifier(), // now acts as "power"
-                random
-        );
+        return eligibleFish.getFirst();
     }
 
     public void reloadFish() {
@@ -51,9 +45,9 @@ public class FishManager {
             fishPool.addAll(fishRepository.getAllFish());
 
             if (fishPool.isEmpty()) {
-                fishPool.add(new FishType("Common Fish", Material.COD, 1, 5, 1));
-                fishPool.add(new FishType("Rare Fish", Material.SALMON, 2, 20, 1));
-                fishPool.add(new FishType("Golden Fish", Material.TROPICAL_FISH, 3, 100, 2));
+                fishPool.add(new FishType("Common Fish", Material.COD, 1, 1));
+                fishPool.add(new FishType("Rare Fish", Material.SALMON, 2, 1));
+                fishPool.add(new FishType("Golden Fish", Material.TROPICAL_FISH, 3, 1));
             }
 
         } catch (SQLException e) {

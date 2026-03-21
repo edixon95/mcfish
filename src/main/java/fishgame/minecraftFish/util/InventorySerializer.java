@@ -65,4 +65,5 @@ public class InventorySerializer {
 
         return contents;
     }
+
 }

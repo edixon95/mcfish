@@ -59,7 +59,7 @@ public class FishGameCommand implements CommandExecutor {
 
                     for (FishType fish : fishTypes) {
                         sender.sendMessage(
-                                fish.getName() + " | Gold Value: " + fish.getBaseGoldValue() + " | Weight: " + fish.getRarityWeight()
+                                fish.getName() + " | Gold Value: " + 1 + " | Roll: " + fish.getRoll()
                         );
                     }
 
