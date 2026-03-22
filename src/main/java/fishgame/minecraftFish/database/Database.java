@@ -1,12 +1,6 @@
 package fishgame.minecraftFish.database;
 
-import fishgame.minecraftFish.fish.FishType;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Material;
 
 public class Database {
 

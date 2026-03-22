@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fishgame.minecraftFish.Misc.PlayerUpgradeDTO;
 import fishgame.minecraftFish.database.PlayerRepository;
-import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
 import fishgame.minecraftFish.player.Upgrade;
 import fishgame.minecraftFish.util.InventorySerializer;

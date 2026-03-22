@@ -2,9 +2,7 @@ package fishgame.minecraftFish.database;
 
 import fishgame.minecraftFish.Misc.Rarity;
 import fishgame.minecraftFish.Misc.ServerConfig;
-import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.Upgrade;
-import org.bukkit.Material;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

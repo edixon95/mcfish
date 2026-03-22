@@ -2,13 +2,10 @@ package fishgame.minecraftFish.game;
 
 import fishgame.minecraftFish.Misc.Rarity;
 import fishgame.minecraftFish.Misc.ServerConfig;
-import fishgame.minecraftFish.database.FishRepository;
 import fishgame.minecraftFish.database.MiscRepository;
-import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.player.FishPlayer;
 import fishgame.minecraftFish.player.Upgrade;
 import fishgame.minecraftFish.util.GameUtil;
-import org.bukkit.Material;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -17,9 +14,11 @@ public class MiscManager {
 
     private final MiscRepository miscRepository;
     private final List<Rarity> rarityPool = new ArrayList<>();
+
     private final List<Upgrade> upgradePool = new ArrayList<>();
-    private final Random random = new Random();
     private final Map<Integer, Upgrade> upgradeIndex = new HashMap<>();
+
+    private final Random random = new Random();
     private final ServerConfig serverConfig;
 
     public MiscManager(MiscRepository miscRepository) {

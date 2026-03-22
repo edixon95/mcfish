@@ -1,7 +1,5 @@
 package fishgame.minecraftFish.listeners;
 
-import fishgame.minecraftFish.Misc.Rarity;
-import fishgame.minecraftFish.fish.FishType;
 import fishgame.minecraftFish.game.GameManager;
 import fishgame.minecraftFish.player.FishPlayer;
 import net.kyori.adventure.text.Component;

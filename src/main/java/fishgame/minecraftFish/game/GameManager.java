@@ -1,9 +1,6 @@
 package fishgame.minecraftFish.game;
 
-import fishgame.minecraftFish.database.Database;
-import fishgame.minecraftFish.database.FishRepository;
-import fishgame.minecraftFish.database.MiscRepository;
-import fishgame.minecraftFish.database.PlayerRepository;
+import fishgame.minecraftFish.database.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GameManager {
@@ -21,15 +18,18 @@ public class GameManager {
     private final FishManager fishManager;
     private final PlayerManager playerManager;
     private final MiscManager miscManager;
+    private final MenuManager menuManager;
 
     public GameManager(JavaPlugin plugin, Database database) {
         FishRepository fishRepo = new FishRepository(database);
         PlayerRepository playerRepo = new PlayerRepository(database);
         MiscRepository miscRepo = new MiscRepository(database);
+        MenuRepository menuRepo = new MenuRepository(database);
 
         this.fishManager = new FishManager(fishRepo);
         this.miscManager = new MiscManager(miscRepo);
         this.playerManager = new PlayerManager(playerRepo, plugin, miscManager);
+        this.menuManager = new MenuManager(menuRepo);
 
     }
 
@@ -42,4 +42,5 @@ public class GameManager {
     }
 
     public MiscManager getMiscManager() { return miscManager;}
+    public MenuManager getMenuManager() {return menuManager;}
 }
