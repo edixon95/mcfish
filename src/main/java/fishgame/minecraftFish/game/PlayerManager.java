@@ -9,6 +9,9 @@ import fishgame.minecraftFish.player.FishPlayer;
 import fishgame.minecraftFish.player.Upgrade;
 import fishgame.minecraftFish.util.InventorySerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.lang.reflect.Type;
@@ -20,6 +23,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayerManager {
@@ -81,6 +87,7 @@ public class PlayerManager {
                 fp.setFishCaught(result.getInt("fish_caught"));
 
                 String playerInventoryJSON = result.getString("inventory");
+//                String testPlayerJSON = createTestHotbarJSON(player);
 
                 applyCombinedInventory(
                         defaultInventoryJSON,
@@ -258,6 +265,38 @@ public class PlayerManager {
 
     private void removePlayer (UUID uuid) {
         onlinePlayers.remove(uuid);
+    }
+
+    private String createTestHotbarJSON(Player player) {
+
+        ItemStack stone = new ItemStack(Material.STONE, 1);
+
+        ItemMeta meta = stone.getItemMeta();
+
+        NamespacedKey actionKey = new NamespacedKey(plugin, "action");
+        NamespacedKey targetKey = new NamespacedKey(plugin, "target");
+
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+
+        pdc.set(actionKey, PersistentDataType.STRING, "navigate");
+        pdc.set(targetKey, PersistentDataType.STRING, "player_upgrades");
+
+        meta.setDisplayName(ChatColor.AQUA + "Player Upgrades");
+        meta.setLore(Arrays.asList(
+                ChatColor.GRAY + "Buy upgrades to fish better",
+                ChatColor.DARK_GRAY + "Last update: 22/03/2026"
+        ));
+
+        stone.setItemMeta(meta);
+
+        // create inventory of size 9 (hotbar size)
+        Inventory hotbar = Bukkit.createInventory(null, 9);
+
+        // put test item in slot 0
+        hotbar.setItem(0, stone);
+
+        // serialize inventory to JSON
+        return InventorySerializer.inventoryToJSON(hotbar);
     }
 
 }
