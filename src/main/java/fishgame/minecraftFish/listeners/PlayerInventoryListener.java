@@ -1,5 +1,6 @@
 package fishgame.minecraftFish.listeners;
 
+import fishgame.minecraftFish.game.GameManager;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,6 +18,12 @@ public class PlayerInventoryListener implements Listener {
     private static final NamespacedKey targetKey = new NamespacedKey("minecraftfish", "target");
     private static final NamespacedKey upgradeKey = new NamespacedKey("minecraftfish", "upgrade_id");
 
+
+    private final GameManager gameManager;
+
+    public PlayerInventoryListener(GameManager gameManager) {
+        this.gameManager = gameManager;
+    }
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
 
@@ -25,20 +32,21 @@ public class PlayerInventoryListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         // Only track clicks in the player's own inventory
         if (event.getClickedInventory() == null) return;
-        if (!event.getClickedInventory().equals(player.getInventory())) {
-            int slot = event.getSlot(); // 0–8 = hotbar, 9+ = main inventory
 
-            // Only track slots beyond hotbar - TBD
-            if (slot <= 8) return;
+        int slot = event.getSlot(); // 0–8 = hotbar, 9+ = main inventory
 
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+        // Hotbar belongs to the player
+        if (event.getClickedInventory().equals(player.getInventory()) && slot <= 8) { return;}
+        event.setCancelled(true);
 
-            ItemMeta meta = clickedItem.getItemMeta();
-            if (meta == null) return;
-            handleMenuClick(meta, player);
-            event.setCancelled(true);
-        }
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+        ItemMeta meta = clickedItem.getItemMeta();
+        if (meta == null) return;
+        handleMenuClick(meta, player);
+
+
 
         // Need MenuContainer for custom menus
 
@@ -57,6 +65,7 @@ public class PlayerInventoryListener implements Listener {
                 String target = data.get(targetKey, PersistentDataType.STRING);
                 if (target == null) return;
                 player.sendMessage("Clicked to navigate to " + target);
+                gameManager.getMenuManager().handleMenuClick(target, player);
                 break;
 
             case "purchase_upgrade":

@@ -16,6 +16,6 @@ public class ListenerManager {
 
     public void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new FishingListener(gameManager), plugin);
-        Bukkit.getPluginManager().registerEvents(new PlayerInventoryListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerInventoryListener(gameManager), plugin);
     }
 }
