@@ -53,6 +53,15 @@ public class FishPlayer {
         return upgrades.toArray(new Upgrade[0]);
     }
 
+    public Upgrade getUpgradeById(int id) {
+        for (Upgrade upgrade : upgrades) {
+            if (upgrade.getId() == id) {
+                return upgrade;
+            }
+        }
+        return null;
+    }
+
     public void setAllUpgrade(List<Upgrade> upgradesToSet) {
         upgrades.addAll(upgradesToSet);
     }

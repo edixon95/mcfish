@@ -30,7 +30,6 @@ public class PlayerInventoryListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) event.getWhoClicked();
-        // Only track clicks in the player's own inventory
         if (event.getClickedInventory() == null) return;
 
         int slot = event.getSlot(); // 0–8 = hotbar, 9+ = main inventory
@@ -69,10 +68,10 @@ public class PlayerInventoryListener implements Listener {
                 break;
 
             case "purchase_upgrade":
-                Integer upgradeVal = data.get(upgradeKey, PersistentDataType.INTEGER);
-                if (upgradeVal == null) return; // Null check then treat as int for class simplicity
-                int upgrade = upgradeVal;
-                player.sendMessage("Clicked to upgrade " + upgrade);
+                String upgradeIntegerAsString = data.get(upgradeKey, PersistentDataType.STRING);
+                if (upgradeIntegerAsString == null) return; // Null check then treat as int for class simplicity
+                int upgradeId = Integer.parseInt(upgradeIntegerAsString);
+                player.sendMessage("Clicked to upgrade " + upgradeId);
                 break;
 
             default:

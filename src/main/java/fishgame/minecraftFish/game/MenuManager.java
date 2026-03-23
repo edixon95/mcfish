@@ -3,6 +3,7 @@ package fishgame.minecraftFish.game;
 import fishgame.minecraftFish.database.MenuRepository;
 import fishgame.minecraftFish.menu.DynamicMenu;
 import fishgame.minecraftFish.menu.MenuItem;
+import fishgame.minecraftFish.player.FishPlayer;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
@@ -13,9 +14,11 @@ public class MenuManager {
     private final MenuRepository menuRepository;
     private final List<MenuItem> menuItems = new ArrayList<>();
     private final DynamicMenu dynamicMenu = new DynamicMenu();
+    private final GameManager gameManager;
 
-    public MenuManager(MenuRepository menuRepository) {
+    public MenuManager(MenuRepository menuRepository, GameManager gameManager) {
         this.menuRepository = menuRepository;
+        this.gameManager = gameManager;
         loadMenusFromDatabase();
     }
 
@@ -24,7 +27,7 @@ public class MenuManager {
             menuItems.addAll(menuRepository.getAllMenus());
 
             if (menuItems.isEmpty()) {
-                String testMenuString = "[{\"DataVersion\":4671,\"id\":\"minecraft:stone\",\"count\":1,\"components\":{\"minecraft:lore\":\"[{extra:[{bold:0b,color:\\\"gray\\\",italic:0b,obfuscated:0b,strikethrough:0b,text:\\\"Level: 5\\\",underlined:0b}],text:\\\"\\\"},{extra:[{bold:0b,color:\\\"dark_gray\\\",italic:0b,obfuscated:0b,strikethrough:0b,text:\\\"PDC test item\\\",underlined:0b}],text:\\\"\\\"}]\",\"minecraft:custom_name\":\"{extra:[{bold:0b,color:\\\"green\\\",italic:0b,obfuscated:0b,strikethrough:0b,text:\\\"Debug Stone\\\",underlined:0b}],text:\\\"\\\"}\",\"minecraft:custom_data\":\"{PublicBukkitValues:{\\\"minecraftfish:item_level\\\":5,\\\"minecraftfish:owner_uuid\\\":\\\"eb8e7d38-808c-4a89-8382-d0846984bba6\\\",\\\"minecraftfish:special_flag\\\":1b}}\"},\"schema_version\":1},null,null,null,null,null,null,null,null]";
+                String testMenuString = "[{\"DataVersion\":4671,\"id\":\"minecraft:birch_log\",\"count\":1,\"components\":{\"minecraft:custom_name\":\"{\\\"extra\\\":[{\\\"text\\\":\\\"Name: {name}\\\",\\\"color\\\":\\\"white\\\",\\\"bold\\\":0,\\\"italic\\\":0,\\\"underlined\\\":0,\\\"strikethrough\\\":0,\\\"obfuscated\\\":0}],\\\"text\\\":\\\"\\\"}\",\"minecraft:lore\":\"[{\\\"extra\\\":[{\\\"text\\\":\\\"Level: {level}\\\",\\\"color\\\":\\\"white\\\",\\\"bold\\\":0,\\\"italic\\\":0,\\\"underlined\\\":0,\\\"strikethrough\\\":0,\\\"obfuscated\\\":0}],\\\"text\\\":\\\"\\\"},{\\\"extra\\\":[{\\\"text\\\":\\\"Cost: {cost}\\\",\\\"color\\\":\\\"white\\\",\\\"bold\\\":0,\\\"italic\\\":0,\\\"underlined\\\":0,\\\"strikethrough\\\":0,\\\"obfuscated\\\":0}],\\\"text\\\":\\\"\\\"}]\",\"minecraft:custom_data\":\"{PublicBukkitValues:{\\\"minecraftfish:action\\\":\\\"purchase_upgrade\\\",\\\"minecraftfish:upgrade_id\\\":\\\"1\\\"}}\"},\"schema_version\":1},null,null,null,null,null,null,null,null]";
                 menuItems.add(new MenuItem(1, "player_upgrades", 9, testMenuString));
             }
 
@@ -46,7 +49,8 @@ public class MenuManager {
     public void handleMenuClick(String target, Player player) {
         MenuItem menu = getMenuByTarget(target);
         if (menu == null) return;
-        dynamicMenu.handleGetMenu(menu, player);
+        FishPlayer fp = gameManager.getPlayerManager().handleGetPlayer(player.getUniqueId());
+        dynamicMenu.handleGetMenu(menu, player, fp);
     }
 
 

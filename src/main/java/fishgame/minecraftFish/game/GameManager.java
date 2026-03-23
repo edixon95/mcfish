@@ -29,7 +29,7 @@ public class GameManager {
         this.fishManager = new FishManager(fishRepo);
         this.miscManager = new MiscManager(miscRepo);
         this.playerManager = new PlayerManager(playerRepo, plugin, miscManager);
-        this.menuManager = new MenuManager(menuRepo);
+        this.menuManager = new MenuManager(menuRepo, this);
 
     }
 
