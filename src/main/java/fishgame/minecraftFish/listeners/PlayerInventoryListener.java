@@ -14,9 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerInventoryListener implements Listener {
 
-    private static final NamespacedKey actionKey = new NamespacedKey("minecraftfish", "action");
-    private static final NamespacedKey targetKey = new NamespacedKey("minecraftfish", "target");
-    private static final NamespacedKey upgradeKey = new NamespacedKey("minecraftfish", "upgrade_id");
+
 
 
     private final GameManager gameManager;
@@ -32,52 +30,13 @@ public class PlayerInventoryListener implements Listener {
         Player player = (Player) event.getWhoClicked();
         if (event.getClickedInventory() == null) return;
 
-        int slot = event.getSlot(); // 0–8 = hotbar, 9+ = main inventory
-
-        // Hotbar belongs to the player
-        if (event.getClickedInventory().equals(player.getInventory()) && slot <= 8) { return;}
         event.setCancelled(true);
-
-        ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-        ItemMeta meta = clickedItem.getItemMeta();
-        if (meta == null) return;
-        handleMenuClick(meta, player);
-
-
+        gameManager.getMenuManager().processMenuClick(event, player);
 
         // Need MenuContainer for custom menus
 
         // Menu handler next
         // Additional menus
         // Buff actions
-    }
-
-    private void handleMenuClick(ItemMeta meta, Player player) {
-        PersistentDataContainer data = meta.getPersistentDataContainer();
-        String action = data.get(actionKey, PersistentDataType.STRING);
-        if (action == null) return;
-
-        switch (action) {
-            case "navigate":
-                String target = data.get(targetKey, PersistentDataType.STRING);
-                if (target == null) return;
-                player.sendMessage("Clicked to navigate to " + target);
-                gameManager.getMenuManager().handleMenuClick(target, player);
-                break;
-
-            case "purchase_upgrade":
-                String upgradeIntegerAsString = data.get(upgradeKey, PersistentDataType.STRING);
-                if (upgradeIntegerAsString == null) return; // Null check then treat as int for class simplicity
-                int upgradeId = Integer.parseInt(upgradeIntegerAsString);
-                player.sendMessage("Clicked to upgrade " + upgradeId);
-                break;
-
-            default:
-                player.sendMessage("Action Type: \"" + action + "\" does not have a function");
-                break;
-        }
-
     }
 }

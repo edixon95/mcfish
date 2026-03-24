@@ -93,4 +93,21 @@ public class DynamicMenu {
         Inventory menuInv = createDynamicMenu(menu, fp);
         player.openInventory(menuInv);
     }
+
+    public void rehydrateMenuSlot(Player player, FishPlayer fp, MenuItem menu, int slot) {
+        Inventory inv = player.getOpenInventory().getTopInventory();
+        ItemStack[] templateItems = menu.getMenuInventoryAsItemStack();
+
+        if (slot >= templateItems.length) return;
+
+        ItemStack templateItem = templateItems[slot];
+
+        if (templateItem == null) {
+            player.sendMessage("Template not found");
+            return;
+        }
+
+        ItemStack updated = applyVariables(new ItemStack[]{templateItem}, fp)[0];
+        inv.setItem(slot, updated);
+    }
 }

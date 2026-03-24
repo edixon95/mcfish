@@ -62,6 +62,14 @@ public class FishPlayer {
         return null;
     }
 
+    public void addLevelsToUpgrade(int id, int amount) {
+        for (Upgrade upgrade : upgrades) {
+            if (upgrade.getId() == id) {
+                upgrade.increaseLevel(amount);
+            }
+        }
+    }
+
     public void setAllUpgrade(List<Upgrade> upgradesToSet) {
         upgrades.addAll(upgradesToSet);
     }
