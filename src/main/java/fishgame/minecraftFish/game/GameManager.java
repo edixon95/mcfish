@@ -19,6 +19,7 @@ public class GameManager {
     private final PlayerManager playerManager;
     private final MiscManager miscManager;
     private final MenuManager menuManager;
+    private final JavaPlugin plugin;
 
     public GameManager(JavaPlugin plugin, Database database) {
         FishRepository fishRepo = new FishRepository(database);
@@ -30,6 +31,7 @@ public class GameManager {
         this.miscManager = new MiscManager(miscRepo);
         this.playerManager = new PlayerManager(playerRepo, plugin, miscManager);
         this.menuManager = new MenuManager(menuRepo, this);
+        this.plugin = plugin;
 
     }
 
@@ -43,4 +45,6 @@ public class GameManager {
 
     public MiscManager getMiscManager() { return miscManager;}
     public MenuManager getMenuManager() {return menuManager;}
+
+    public JavaPlugin getPlugin() {return plugin;}
 }
